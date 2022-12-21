@@ -21,10 +21,12 @@ async function createClientDomain(eventData, commandMeta) {
     };
   }
 
-  await createClientService(eventData);
-  await publishClientCreatedService(
-    new ClientCreatedEventSchema(eventData, commandMeta)
-  );
+  await Promise.all([
+    createClientService(eventData),
+    publishClientCreatedService(
+      new ClientCreatedEventSchema(eventData, commandMeta)
+    ),
+  ]);
 
   return {
     statusCode: 200,

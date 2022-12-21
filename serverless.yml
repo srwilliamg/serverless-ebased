@@ -25,7 +25,7 @@ functions:
     environment:
       CLIENTS_TABLE: ${self:custom.clients-table-name}
       CLIENTS_TOPIC_NAME: ${self:custom.sns-topic-name}
-      CLIENTS_TOPIC_ARN: !GetAtt ClientsTable.Arn
+      CLIENTS_TOPIC_ARN: !Ref ClientCreateTopic
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
