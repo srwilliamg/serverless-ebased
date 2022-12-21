@@ -1,6 +1,6 @@
-frameworkVersion: '^3.25.1'
+frameworkVersion: "^3.25.1"
 service: williamSalazar
-  
+
 provider:
   name: aws
   runtime: nodejs16.x
@@ -18,9 +18,40 @@ custom:
   sns-topic-name: ${self:service}-${self:provider.stage}-client-topic
 
 functions:
+  CreateCardEBased:
+    handler: handlers/create-card.handler
+    name: ${self:service}-${self:provider.stage}-create-card-function
+    environment:
+      CLIENTS_TABLE: ${self:custom.clients-table-name}
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource:
+          - !GetAtt ClientsTable.Arn
+    events:
+      - sqs:
+          arn: !GetAtt CreateCardQueue.Arn
+
+  CreateGiftEBased:
+    handler: handlers/create-gift.handler
+    name: ${self:service}-${self:provider.stage}-create-gift-function
+    environment:
+      CLIENTS_TABLE: ${self:custom.clients-table-name}
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource:
+          - !GetAtt ClientsTable.Arn
+    events:
+      - sqs:
+          arn: !GetAtt CreateGiftQueue.Arn
 
   CreateClientEBased:
-    handler: handler/create-client.handler
+    handler: handlers/create-client.handler
     name: ${self:service}-${self:provider.stage}-create-client-function
     environment:
       CLIENTS_TABLE: ${self:custom.clients-table-name}
@@ -31,7 +62,7 @@ functions:
       - Effect: Allow
         Action:
           - sns:Publish
-        Resource: 
+        Resource:
           - !Ref ClientCreateTopic
       - Effect: Allow
         Action:
@@ -46,7 +77,6 @@ functions:
 
 resources:
   Resources:
-
     ClientsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -71,19 +101,19 @@ resources:
             Endpoint: !GetAtt CreateCardQueue.Arn
           - Protocol: sqs
             Endpoint: !GetAtt CreateGiftQueue.Arn
-            
+
     CreateCardQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:service}-${self:provider.stage}-create-card-queue
-    
+
     CreateCardQueuePolicy:
       Type: AWS::SQS::QueuePolicy
-      Properties: 
-        PolicyDocument: 
+      Properties:
+        PolicyDocument:
           Statement:
             - Effect: Allow
-              Action: 
+              Action:
                 - SQS:*
               Resource: !GetAtt CreateCardQueue.Arn
               Principal:
@@ -91,30 +121,30 @@ resources:
                   - !Ref AWS::AccountId
             - Effect: Allow
               Principal:
-                AWS: 
-                  - '*'
-              Action: 
+                AWS:
+                  - "*"
+              Action:
                 - SQS:SendMessage
               Resource: !GetAtt CreateCardQueue.Arn
               Condition:
                 ArnLike:
                   aws:SourceArn:
                     - !Ref ClientCreateTopic
-        Queues: 
+        Queues:
           - !Ref CreateCardQueue
 
     CreateGiftQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:service}-${self:provider.stage}-create-gift-queue
-    
+
     CreateGiftQueuePolicy:
       Type: AWS::SQS::QueuePolicy
-      Properties: 
+      Properties:
         PolicyDocument:
           Statement:
             - Effect: Allow
-              Action: 
+              Action:
                 - SQS:*
               Resource: !GetAtt CreateGiftQueue.Arn
               Principal:
@@ -122,14 +152,14 @@ resources:
                   - !Ref AWS::AccountId
             - Effect: Allow
               Principal:
-                AWS: 
-                  - '*'
-              Action: 
+                AWS:
+                  - "*"
+              Action:
                 - SQS:SendMessage
               Resource: !GetAtt CreateGiftQueue.Arn
               Condition:
                 ArnLike:
                   aws:SourceArn:
                     - !Ref ClientCreateTopic
-        Queues: 
+        Queues:
           - !Ref CreateGiftQueue

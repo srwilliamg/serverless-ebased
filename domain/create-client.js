@@ -1,6 +1,3 @@
-const DYNAMODB = require("aws-sdk/clients/dynamodb");
-const SNS = require("aws-sdk/clients/sns");
-
 const { calculateAge } = require("../helpers/calculate-age.js");
 const {
   ClientCreatedEventSchema,

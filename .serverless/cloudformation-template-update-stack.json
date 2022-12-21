@@ -71,6 +71,18 @@
         }
       }
     },
+    "CreateCardEBasedLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/williamSalazar-dev-create-card-function"
+      }
+    },
+    "CreateGiftEBasedLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/williamSalazar-dev-create-gift-function"
+      }
+    },
     "CreateClientEBasedLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -133,6 +145,38 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/williamSalazar-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CreateCardQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CreateGiftQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -154,18 +198,18 @@
         }
       }
     },
-    "CreateClientEBasedLambdaFunction": {
+    "CreateCardEBasedLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/williamSalazar/dev/1671574786932-2022-12-20T22:19:46.932Z/williamSalazar.zip"
+          "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
         },
-        "Handler": "handler/create-client.handler",
+        "Handler": "handlers/create-card.handler",
         "Runtime": "nodejs16.x",
-        "FunctionName": "williamSalazar-dev-create-client-function",
+        "FunctionName": "williamSalazar-dev-create-card-function",
         "MemorySize": 1024,
         "Timeout": 6,
         "Tags": [
@@ -181,6 +225,84 @@
         },
         "Role": {
           "Fn::GetAtt": [
+            "CreateCardEBasedIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CreateCardEBasedIamRoleLambdaExecution",
+        "CreateCardEBasedLogGroup"
+      ]
+    },
+    "CreateGiftEBasedLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
+        },
+        "Handler": "handlers/create-gift.handler",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "williamSalazar-dev-create-gift-function",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "ebased"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "CLIENTS_TABLE": "williamSalazar-dev-client-table"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CreateGiftEBasedIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CreateGiftEBasedIamRoleLambdaExecution",
+        "CreateGiftEBasedLogGroup"
+      ]
+    },
+    "CreateClientEBasedLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
+        },
+        "Handler": "handlers/create-client.handler",
+        "Runtime": "nodejs16.x",
+        "FunctionName": "williamSalazar-dev-create-client-function",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "ebased"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "CLIENTS_TABLE": "williamSalazar-dev-client-table",
+            "CLIENTS_TOPIC_NAME": "williamSalazar-dev-client-topic",
+            "CLIENTS_TOPIC_ARN": {
+              "Ref": "ClientCreateTopic"
+            }
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
             "CreateClientEBasedIamRoleLambdaExecution",
             "Arn"
           ]
@@ -191,14 +313,34 @@
         "CreateClientEBasedLogGroup"
       ]
     },
-    "CreateClientEBasedLambdaVersionPET9eneC1E2o4FjVZpPvIyWbNtNnKD9D7EpsOaBllew": {
+    "CreateCardEBasedLambdaVersion4K8nE6IqEnwYJHGa1IBuBzksbSYgqAfIJbJx9sA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CreateCardEBasedLambdaFunction"
+        },
+        "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
+      }
+    },
+    "CreateGiftEBasedLambdaVersionXqs2eXiFeQiDeRnfltcMjcyE87xmax70Kyjbow8XU": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CreateGiftEBasedLambdaFunction"
+        },
+        "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
+      }
+    },
+    "CreateClientEBasedLambdaVersionZYMF1vx6TpeFjb7kL3nHzXQzRRe2PZHcF6OsFDIcyfU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateClientEBasedLambdaFunction"
         },
-        "CodeSha256": "8nAdcGl56K+fCYZpqohBqYa+7F5Gayc8ulhBiNamH1k="
+        "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
       }
     },
     "ApiGatewayRestApi": {
@@ -319,7 +461,7 @@
         "CreateClientEBasedLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1671574780363": {
+    "ApiGatewayDeployment1671654373946": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -367,6 +509,244 @@
             ]
           ]
         }
+      }
+    },
+    "CreateCardEBasedEventSourceMappingSQSCreateCardQueue": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": "CreateCardEBasedIamRoleLambdaExecution",
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "CreateCardQueue",
+            "Arn"
+          ]
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CreateCardEBasedLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Enabled": true
+      }
+    },
+    "CreateGiftEBasedEventSourceMappingSQSCreateGiftQueue": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": "CreateGiftEBasedIamRoleLambdaExecution",
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "CreateGiftQueue",
+            "Arn"
+          ]
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CreateGiftEBasedLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Enabled": true
+      }
+    },
+    "CreateCardEBasedIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "williamSalazar",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/williamSalazar-dev-create-card-function:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CreateCardQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ClientsTable",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "williamSalazar",
+              "dev",
+              "CreateCardEBased",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "CreateGiftEBasedIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "williamSalazar",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/williamSalazar-dev-create-gift-function:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CreateGiftQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ClientsTable",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "williamSalazar",
+              "dev",
+              "CreateGiftEBased",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
       }
     },
     "CreateClientEBasedIamRoleLambdaExecution": {
@@ -421,7 +801,11 @@
                   "Action": [
                     "sns:Publish"
                   ],
-                  "Resource": "arn:aws:sns:us-east-1:066987178365:client-created"
+                  "Resource": [
+                    {
+                      "Ref": "ClientCreateTopic"
+                    }
+                  ]
                 },
                 {
                   "Effect": "Allow",
@@ -480,6 +864,163 @@
           "WriteCapacityUnits": 1
         }
       }
+    },
+    "ClientCreateTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "Client Created Topic",
+        "TopicName": "williamSalazar-dev-client-created-topic",
+        "Subscription": [
+          {
+            "Protocol": "sqs",
+            "Endpoint": {
+              "Fn::GetAtt": [
+                "CreateCardQueue",
+                "Arn"
+              ]
+            }
+          },
+          {
+            "Protocol": "sqs",
+            "Endpoint": {
+              "Fn::GetAtt": [
+                "CreateGiftQueue",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CreateCardQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": "williamSalazar-dev-create-card-queue"
+      }
+    },
+    "CreateCardQueuePolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "SQS:*"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CreateCardQueue",
+                  "Arn"
+                ]
+              },
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "AWS::AccountId"
+                  }
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "*"
+                ]
+              },
+              "Action": [
+                "SQS:SendMessage"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CreateCardQueue",
+                  "Arn"
+                ]
+              },
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": [
+                    {
+                      "Ref": "ClientCreateTopic"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "Queues": [
+          {
+            "Ref": "CreateCardQueue"
+          }
+        ]
+      }
+    },
+    "CreateGiftQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": "williamSalazar-dev-create-gift-queue"
+      }
+    },
+    "CreateGiftQueuePolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "SQS:*"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CreateGiftQueue",
+                  "Arn"
+                ]
+              },
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "AWS::AccountId"
+                  }
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "*"
+                ]
+              },
+              "Action": [
+                "SQS:SendMessage"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CreateGiftQueue",
+                  "Arn"
+                ]
+              },
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": [
+                    {
+                      "Ref": "ClientCreateTopic"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "Queues": [
+          {
+            "Ref": "CreateGiftQueue"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
@@ -491,10 +1032,28 @@
         "Name": "sls-williamSalazar-dev-ServerlessDeploymentBucketName"
       }
     },
+    "CreateCardEBasedLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CreateCardEBasedLambdaVersion4K8nE6IqEnwYJHGa1IBuBzksbSYgqAfIJbJx9sA"
+      },
+      "Export": {
+        "Name": "sls-williamSalazar-dev-CreateCardEBasedLambdaFunctionQualifiedArn"
+      }
+    },
+    "CreateGiftEBasedLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CreateGiftEBasedLambdaVersionXqs2eXiFeQiDeRnfltcMjcyE87xmax70Kyjbow8XU"
+      },
+      "Export": {
+        "Name": "sls-williamSalazar-dev-CreateGiftEBasedLambdaFunctionQualifiedArn"
+      }
+    },
     "CreateClientEBasedLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateClientEBasedLambdaVersionPET9eneC1E2o4FjVZpPvIyWbNtNnKD9D7EpsOaBllew"
+        "Ref": "CreateClientEBasedLambdaVersionZYMF1vx6TpeFjb7kL3nHzXQzRRe2PZHcF6OsFDIcyfU"
       },
       "Export": {
         "Name": "sls-williamSalazar-dev-CreateClientEBasedLambdaFunctionQualifiedArn"
