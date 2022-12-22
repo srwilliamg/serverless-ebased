@@ -11,6 +11,7 @@
   "dependencies": {
     "aws-sdk": "^2.906.0",
     "ebased": "^1.6.2",
+    "lodash": "^4.17.21",
     "serverless-iam-roles-per-function": "^3.2.0"
   },
   "devDependencies": {

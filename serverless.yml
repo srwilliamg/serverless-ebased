@@ -18,62 +18,7 @@ custom:
   sns-topic-name: ${self:service}-${self:provider.stage}-client-topic
 
 functions:
-  CreateCardEBased:
-    handler: handlers/create-card.handler
-    name: ${self:service}-${self:provider.stage}-create-card-function
-    environment:
-      CLIENTS_TABLE: ${self:custom.clients-table-name}
-    iamRoleStatementsInherit: true
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource:
-          - !GetAtt ClientsTable.Arn
-    events:
-      - sqs:
-          arn: !GetAtt CreateCardQueue.Arn
-
-  CreateGiftEBased:
-    handler: handlers/create-gift.handler
-    name: ${self:service}-${self:provider.stage}-create-gift-function
-    environment:
-      CLIENTS_TABLE: ${self:custom.clients-table-name}
-    iamRoleStatementsInherit: true
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource:
-          - !GetAtt ClientsTable.Arn
-    events:
-      - sqs:
-          arn: !GetAtt CreateGiftQueue.Arn
-
-  CreateClientEBased:
-    handler: handlers/create-client.handler
-    name: ${self:service}-${self:provider.stage}-create-client-function
-    environment:
-      CLIENTS_TABLE: ${self:custom.clients-table-name}
-      CLIENTS_TOPIC_NAME: ${self:custom.sns-topic-name}
-      CLIENTS_TOPIC_ARN: !Ref ClientCreateTopic
-    iamRoleStatementsInherit: true
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - sns:Publish
-        Resource:
-          - !Ref ClientCreateTopic
-      - Effect: Allow
-        Action:
-          - dynamodb:PutItem
-        Resource:
-          - !GetAtt ClientsTable.Arn
-    events:
-      - http:
-          path: /client
-          method: post
-          cors: true
+  - ${file(./functions.yml)}
 
 resources:
   Resources:

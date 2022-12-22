@@ -104,6 +104,12 @@
               "LogGroupName": "/aws/lambda/williamSalazar-dev-create-client-function"
             }
           },
+          "BuyProductsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/williamSalazar-dev-buy-products-function"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -220,9 +226,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
+                "S3Key": "serverless/williamSalazar/dev/1671738507554-2022-12-22T19:48:27.554Z/williamSalazar.zip"
               },
-              "Handler": "handlers/create-card.handler",
+              "Handler": "cards/handlers/create-card.handler",
               "Runtime": "nodejs16.x",
               "FunctionName": "williamSalazar-dev-create-card-function",
               "MemorySize": 1024,
@@ -257,9 +263,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
+                "S3Key": "serverless/williamSalazar/dev/1671738507554-2022-12-22T19:48:27.554Z/williamSalazar.zip"
               },
-              "Handler": "handlers/create-gift.handler",
+              "Handler": "gift/handlers/create-gift.handler",
               "Runtime": "nodejs16.x",
               "FunctionName": "williamSalazar-dev-create-gift-function",
               "MemorySize": 1024,
@@ -294,9 +300,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z/williamSalazar.zip"
+                "S3Key": "serverless/williamSalazar/dev/1671738507554-2022-12-22T19:48:27.554Z/williamSalazar.zip"
               },
-              "Handler": "handlers/create-client.handler",
+              "Handler": "clients/handlers/create-client.handler",
               "Runtime": "nodejs16.x",
               "FunctionName": "williamSalazar-dev-create-client-function",
               "MemorySize": 1024,
@@ -328,34 +334,81 @@
               "CreateClientEBasedLogGroup"
             ]
           },
-          "CreateCardEBasedLambdaVersion4K8nE6IqEnwYJHGa1IBuBzksbSYgqAfIJbJx9sA": {
+          "BuyProductsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/williamSalazar/dev/1671738507554-2022-12-22T19:48:27.554Z/williamSalazar.zip"
+              },
+              "Handler": "products/handlers/buy-products.handler",
+              "Runtime": "nodejs16.x",
+              "FunctionName": "williamSalazar-dev-buy-products-function",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Tags": [
+                {
+                  "Key": "project",
+                  "Value": "ebased"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "CLIENTS_TABLE": "williamSalazar-dev-client-table"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "BuyProductsIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "BuyProductsIamRoleLambdaExecution",
+              "BuyProductsLogGroup"
+            ]
+          },
+          "CreateCardEBasedLambdaVersionRFQCRMscNM0kMqAvZnkGAcemwM8sCKmzyvsEZEiEU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateCardEBasedLambdaFunction"
               },
-              "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
+              "CodeSha256": "cbqjAg6XTneZJnmZSlep8uzoTSsJy3jKDNxBKShIg9Q="
             }
           },
-          "CreateGiftEBasedLambdaVersionXqs2eXiFeQiDeRnfltcMjcyE87xmax70Kyjbow8XU": {
+          "CreateGiftEBasedLambdaVersionaC9ODiQuu7XrDpWFGS14E6bNX4I7sv1N7OzDVJ0RWU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateGiftEBasedLambdaFunction"
               },
-              "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
+              "CodeSha256": "cbqjAg6XTneZJnmZSlep8uzoTSsJy3jKDNxBKShIg9Q="
             }
           },
-          "CreateClientEBasedLambdaVersionZYMF1vx6TpeFjb7kL3nHzXQzRRe2PZHcF6OsFDIcyfU": {
+          "CreateClientEBasedLambdaVersion8n8tEJMcxleipgr7FBq8sNtyQ7GVdB9sbeaGezQoI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateClientEBasedLambdaFunction"
               },
-              "CodeSha256": "6FLgv9y66FudFrY+hFYZWDlwQj14QWDpQNISEINDce8="
+              "CodeSha256": "cbqjAg6XTneZJnmZSlep8uzoTSsJy3jKDNxBKShIg9Q="
+            }
+          },
+          "BuyProductsLambdaVersionnByWhMZfyKmWolzAvQHf7aqggki6DYAkkYWxEkrkak": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "BuyProductsLambdaFunction"
+              },
+              "CodeSha256": "cbqjAg6XTneZJnmZSlep8uzoTSsJy3jKDNxBKShIg9Q="
             }
           },
           "ApiGatewayRestApi": {
@@ -380,6 +433,21 @@
                 ]
               },
               "PathPart": "client",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceBuy": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "buy",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -424,6 +492,51 @@
               },
               "ResourceId": {
                 "Ref": "ApiGatewayResourceClient"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodBuyOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBuy"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -476,7 +589,53 @@
               "CreateClientEBasedLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1671654373946": {
+          "ApiGatewayMethodBuyPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBuy"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "BuyProductsLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "BuyProductsLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1671738501954": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -486,7 +645,9 @@
             },
             "DependsOn": [
               "ApiGatewayMethodClientOptions",
-              "ApiGatewayMethodClientPost"
+              "ApiGatewayMethodBuyOptions",
+              "ApiGatewayMethodClientPost",
+              "ApiGatewayMethodBuyPost"
             ]
           },
           "CreateClientEBasedLambdaPermissionApiGateway": {
@@ -495,6 +656,43 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "CreateClientEBasedLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "BuyProductsLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "BuyProductsLambdaFunction",
                   "Arn"
                 ]
               },
@@ -852,6 +1050,89 @@
               "ManagedPolicyArns": []
             }
           },
+          "BuyProductsIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "williamSalazar",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/williamSalazar-dev-buy-products-function:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "dynamodb:UpdateItem"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "ClientsTable",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "williamSalazar",
+                    "dev",
+                    "BuyProducts",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
           "ClientsTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -1044,7 +1325,7 @@
           "CreateCardEBasedLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateCardEBasedLambdaVersion4K8nE6IqEnwYJHGa1IBuBzksbSYgqAfIJbJx9sA"
+              "Ref": "CreateCardEBasedLambdaVersionRFQCRMscNM0kMqAvZnkGAcemwM8sCKmzyvsEZEiEU"
             },
             "Export": {
               "Name": "sls-williamSalazar-dev-CreateCardEBasedLambdaFunctionQualifiedArn"
@@ -1053,7 +1334,7 @@
           "CreateGiftEBasedLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateGiftEBasedLambdaVersionXqs2eXiFeQiDeRnfltcMjcyE87xmax70Kyjbow8XU"
+              "Ref": "CreateGiftEBasedLambdaVersionaC9ODiQuu7XrDpWFGS14E6bNX4I7sv1N7OzDVJ0RWU"
             },
             "Export": {
               "Name": "sls-williamSalazar-dev-CreateGiftEBasedLambdaFunctionQualifiedArn"
@@ -1062,10 +1343,19 @@
           "CreateClientEBasedLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateClientEBasedLambdaVersionZYMF1vx6TpeFjb7kL3nHzXQzRRe2PZHcF6OsFDIcyfU"
+              "Ref": "CreateClientEBasedLambdaVersion8n8tEJMcxleipgr7FBq8sNtyQ7GVdB9sbeaGezQoI"
             },
             "Export": {
               "Name": "sls-williamSalazar-dev-CreateClientEBasedLambdaFunctionQualifiedArn"
+            }
+          },
+          "BuyProductsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "BuyProductsLambdaVersionnByWhMZfyKmWolzAvQHf7aqggki6DYAkkYWxEkrkak"
+            },
+            "Export": {
+              "Name": "sls-williamSalazar-dev-BuyProductsLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -1191,7 +1481,7 @@
     "pluginsData": {},
     "functions": {
       "CreateCardEBased": {
-        "handler": "handlers/create-card.handler",
+        "handler": "cards/handlers/create-card.handler",
         "name": "williamSalazar-dev-create-card-function",
         "environment": {
           "CLIENTS_TABLE": "williamSalazar-dev-client-table"
@@ -1216,10 +1506,10 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "CreateCardEBasedLambdaVersion4K8nE6IqEnwYJHGa1IBuBzksbSYgqAfIJbJx9sA"
+        "versionLogicalId": "CreateCardEBasedLambdaVersionRFQCRMscNM0kMqAvZnkGAcemwM8sCKmzyvsEZEiEU"
       },
       "CreateGiftEBased": {
-        "handler": "handlers/create-gift.handler",
+        "handler": "gift/handlers/create-gift.handler",
         "name": "williamSalazar-dev-create-gift-function",
         "environment": {
           "CLIENTS_TABLE": "williamSalazar-dev-client-table"
@@ -1244,10 +1534,10 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "CreateGiftEBasedLambdaVersionXqs2eXiFeQiDeRnfltcMjcyE87xmax70Kyjbow8XU"
+        "versionLogicalId": "CreateGiftEBasedLambdaVersionaC9ODiQuu7XrDpWFGS14E6bNX4I7sv1N7OzDVJ0RWU"
       },
       "CreateClientEBased": {
-        "handler": "handlers/create-client.handler",
+        "handler": "clients/handlers/create-client.handler",
         "name": "williamSalazar-dev-create-client-function",
         "environment": {
           "CLIENTS_TABLE": "williamSalazar-dev-client-table",
@@ -1296,7 +1586,52 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "CreateClientEBasedLambdaVersionZYMF1vx6TpeFjb7kL3nHzXQzRRe2PZHcF6OsFDIcyfU"
+        "versionLogicalId": "CreateClientEBasedLambdaVersion8n8tEJMcxleipgr7FBq8sNtyQ7GVdB9sbeaGezQoI"
+      },
+      "BuyProducts": {
+        "handler": "products/handlers/buy-products.handler",
+        "name": "williamSalazar-dev-buy-products-function",
+        "environment": {
+          "CLIENTS_TABLE": "williamSalazar-dev-client-table"
+        },
+        "iamRoleStatementsInherit": true,
+        "iamRoleStatements": [
+          {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"BuyProductsIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][1]"
+          }
+        ],
+        "events": [
+          {
+            "http": {
+              "path": "buy",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs16.x",
+        "vpc": {},
+        "versionLogicalId": "BuyProductsLambdaVersionnByWhMZfyKmWolzAvQHf7aqggki6DYAkkYWxEkrkak"
       }
     },
     "resources": {
@@ -1509,7 +1844,7 @@
     "artifact": "/home/will/Documents/NARANJA/ejercicio-sdk/.serverless/williamSalazar.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/williamSalazar/dev/1671654379920-2022-12-21T20:26:19.920Z",
+    "artifactDirectoryName": "serverless/williamSalazar/dev/1671738507554-2022-12-22T19:48:27.554Z",
     "artifact": "williamSalazar.zip"
   }
 }
